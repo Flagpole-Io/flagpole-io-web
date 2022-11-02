@@ -1,0 +1,6 @@
+query getStatus {
+    status {
+        flag
+        lights
+    }
+}

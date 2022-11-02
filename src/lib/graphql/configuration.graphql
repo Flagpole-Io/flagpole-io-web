@@ -1,0 +1,14 @@
+query getConfiguration {
+    configuration {
+        hasMotor
+        hasWeatherProofFlag
+        hasLights
+    }
+}
+mutation updateConfiguration($input:ConfigurationInput!) {
+    updateConfiguration(input: $input) {
+        hasMotor
+        hasWeatherProofFlag
+        hasLights
+    }
+}

@@ -1,0 +1,9 @@
+query getRequests {
+    requests {
+        action
+        value
+    }
+}
+mutation addRequest($input:RequestInput!) {
+    addRequest(input: $input)
+}

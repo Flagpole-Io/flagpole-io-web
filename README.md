@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# flagpole-io-web
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+SPA that allows users to configure and control the flagpole system.
 
 ## Available Scripts
 
