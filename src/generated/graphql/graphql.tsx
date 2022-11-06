@@ -2,9 +2,15 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -20,12 +26,16 @@ export type Configuration = {
   hasLights: Scalars['Boolean'];
   hasMotor: Scalars['Boolean'];
   hasWeatherProofFlag: Scalars['Boolean'];
+  pushoverApiToken?: Maybe<Scalars['String']>;
+  pushoverUserKey?: Maybe<Scalars['String']>;
 };
 
 export type ConfigurationInput = {
   hasLights: Scalars['Boolean'];
   hasMotor: Scalars['Boolean'];
   hasWeatherProofFlag: Scalars['Boolean'];
+  pushoverApiToken?: InputMaybe<Scalars['String']>;
+  pushoverUserKey?: InputMaybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -34,11 +44,9 @@ export type Mutation = {
   updateConfiguration?: Maybe<Configuration>;
 };
 
-
 export type MutationAddRequestArgs = {
   input: RequestInput;
 };
-
 
 export type MutationUpdateConfigurationArgs = {
   input: ConfigurationInput;
@@ -68,45 +76,78 @@ export type Status = {
   lights?: Maybe<Scalars['String']>;
 };
 
-export type GetConfigurationQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetConfigurationQueryVariables = Exact<{ [key: string]: never }>;
 
-
-export type GetConfigurationQuery = { __typename?: 'Query', configuration?: { __typename?: 'Configuration', hasMotor: boolean, hasWeatherProofFlag: boolean, hasLights: boolean } | null };
+export type GetConfigurationQuery = {
+  __typename?: 'Query';
+  configuration?: {
+    __typename?: 'Configuration';
+    hasMotor: boolean;
+    hasWeatherProofFlag: boolean;
+    hasLights: boolean;
+    pushoverApiToken?: string | null;
+    pushoverUserKey?: string | null;
+  } | null;
+};
 
 export type UpdateConfigurationMutationVariables = Exact<{
   input: ConfigurationInput;
 }>;
 
+export type UpdateConfigurationMutation = {
+  __typename?: 'Mutation';
+  updateConfiguration?: {
+    __typename?: 'Configuration';
+    hasMotor: boolean;
+    hasWeatherProofFlag: boolean;
+    hasLights: boolean;
+    pushoverApiToken?: string | null;
+    pushoverUserKey?: string | null;
+  } | null;
+};
 
-export type UpdateConfigurationMutation = { __typename?: 'Mutation', updateConfiguration?: { __typename?: 'Configuration', hasMotor: boolean, hasWeatherProofFlag: boolean, hasLights: boolean } | null };
+export type GetRequestsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetRequestsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetRequestsQuery = { __typename?: 'Query', requests: Array<{ __typename?: 'Request', action: string, value?: number | null }> };
+export type GetRequestsQuery = {
+  __typename?: 'Query';
+  requests: Array<{
+    __typename?: 'Request';
+    action: string;
+    value?: number | null;
+  }>;
+};
 
 export type AddRequestMutationVariables = Exact<{
   input: RequestInput;
 }>;
 
+export type AddRequestMutation = {
+  __typename?: 'Mutation';
+  addRequest?: number | null;
+};
 
-export type AddRequestMutation = { __typename?: 'Mutation', addRequest?: number | null };
+export type GetStatusQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetStatusQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetStatusQuery = { __typename?: 'Query', status?: { __typename?: 'Status', flag?: string | null, lights?: string | null } | null };
-
+export type GetStatusQuery = {
+  __typename?: 'Query';
+  status?: {
+    __typename?: 'Status';
+    flag?: string | null;
+    lights?: string | null;
+  } | null;
+};
 
 export const GetConfigurationDocument = gql`
-    query getConfiguration {
-  configuration {
-    hasMotor
-    hasWeatherProofFlag
-    hasLights
+  query getConfiguration {
+    configuration {
+      hasMotor
+      hasWeatherProofFlag
+      hasLights
+      pushoverApiToken
+      pushoverUserKey
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetConfigurationQuery__
@@ -123,27 +164,55 @@ export const GetConfigurationDocument = gql`
  *   },
  * });
  */
-export function useGetConfigurationQuery(baseOptions?: Apollo.QueryHookOptions<GetConfigurationQuery, GetConfigurationQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetConfigurationQuery, GetConfigurationQueryVariables>(GetConfigurationDocument, options);
-      }
-export function useGetConfigurationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConfigurationQuery, GetConfigurationQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetConfigurationQuery, GetConfigurationQueryVariables>(GetConfigurationDocument, options);
-        }
-export type GetConfigurationQueryHookResult = ReturnType<typeof useGetConfigurationQuery>;
-export type GetConfigurationLazyQueryHookResult = ReturnType<typeof useGetConfigurationLazyQuery>;
-export type GetConfigurationQueryResult = Apollo.QueryResult<GetConfigurationQuery, GetConfigurationQueryVariables>;
-export const UpdateConfigurationDocument = gql`
-    mutation updateConfiguration($input: ConfigurationInput!) {
-  updateConfiguration(input: $input) {
-    hasMotor
-    hasWeatherProofFlag
-    hasLights
-  }
+export function useGetConfigurationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetConfigurationQuery,
+    GetConfigurationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetConfigurationQuery, GetConfigurationQueryVariables>(
+    GetConfigurationDocument,
+    options,
+  );
 }
-    `;
-export type UpdateConfigurationMutationFn = Apollo.MutationFunction<UpdateConfigurationMutation, UpdateConfigurationMutationVariables>;
+export function useGetConfigurationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetConfigurationQuery,
+    GetConfigurationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetConfigurationQuery,
+    GetConfigurationQueryVariables
+  >(GetConfigurationDocument, options);
+}
+export type GetConfigurationQueryHookResult = ReturnType<
+  typeof useGetConfigurationQuery
+>;
+export type GetConfigurationLazyQueryHookResult = ReturnType<
+  typeof useGetConfigurationLazyQuery
+>;
+export type GetConfigurationQueryResult = Apollo.QueryResult<
+  GetConfigurationQuery,
+  GetConfigurationQueryVariables
+>;
+export const UpdateConfigurationDocument = gql`
+  mutation updateConfiguration($input: ConfigurationInput!) {
+    updateConfiguration(input: $input) {
+      hasMotor
+      hasWeatherProofFlag
+      hasLights
+      pushoverApiToken
+      pushoverUserKey
+    }
+  }
+`;
+export type UpdateConfigurationMutationFn = Apollo.MutationFunction<
+  UpdateConfigurationMutation,
+  UpdateConfigurationMutationVariables
+>;
 
 /**
  * __useUpdateConfigurationMutation__
@@ -162,21 +231,35 @@ export type UpdateConfigurationMutationFn = Apollo.MutationFunction<UpdateConfig
  *   },
  * });
  */
-export function useUpdateConfigurationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateConfigurationMutation, UpdateConfigurationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateConfigurationMutation, UpdateConfigurationMutationVariables>(UpdateConfigurationDocument, options);
-      }
-export type UpdateConfigurationMutationHookResult = ReturnType<typeof useUpdateConfigurationMutation>;
-export type UpdateConfigurationMutationResult = Apollo.MutationResult<UpdateConfigurationMutation>;
-export type UpdateConfigurationMutationOptions = Apollo.BaseMutationOptions<UpdateConfigurationMutation, UpdateConfigurationMutationVariables>;
-export const GetRequestsDocument = gql`
-    query getRequests {
-  requests {
-    action
-    value
-  }
+export function useUpdateConfigurationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateConfigurationMutation,
+    UpdateConfigurationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateConfigurationMutation,
+    UpdateConfigurationMutationVariables
+  >(UpdateConfigurationDocument, options);
 }
-    `;
+export type UpdateConfigurationMutationHookResult = ReturnType<
+  typeof useUpdateConfigurationMutation
+>;
+export type UpdateConfigurationMutationResult =
+  Apollo.MutationResult<UpdateConfigurationMutation>;
+export type UpdateConfigurationMutationOptions = Apollo.BaseMutationOptions<
+  UpdateConfigurationMutation,
+  UpdateConfigurationMutationVariables
+>;
+export const GetRequestsDocument = gql`
+  query getRequests {
+    requests {
+      action
+      value
+    }
+  }
+`;
 
 /**
  * __useGetRequestsQuery__
@@ -193,23 +276,47 @@ export const GetRequestsDocument = gql`
  *   },
  * });
  */
-export function useGetRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetRequestsQuery, GetRequestsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRequestsQuery, GetRequestsQueryVariables>(GetRequestsDocument, options);
-      }
-export function useGetRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestsQuery, GetRequestsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRequestsQuery, GetRequestsQueryVariables>(GetRequestsDocument, options);
-        }
-export type GetRequestsQueryHookResult = ReturnType<typeof useGetRequestsQuery>;
-export type GetRequestsLazyQueryHookResult = ReturnType<typeof useGetRequestsLazyQuery>;
-export type GetRequestsQueryResult = Apollo.QueryResult<GetRequestsQuery, GetRequestsQueryVariables>;
-export const AddRequestDocument = gql`
-    mutation addRequest($input: RequestInput!) {
-  addRequest(input: $input)
+export function useGetRequestsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetRequestsQuery,
+    GetRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetRequestsQuery, GetRequestsQueryVariables>(
+    GetRequestsDocument,
+    options,
+  );
 }
-    `;
-export type AddRequestMutationFn = Apollo.MutationFunction<AddRequestMutation, AddRequestMutationVariables>;
+export function useGetRequestsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRequestsQuery,
+    GetRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetRequestsQuery, GetRequestsQueryVariables>(
+    GetRequestsDocument,
+    options,
+  );
+}
+export type GetRequestsQueryHookResult = ReturnType<typeof useGetRequestsQuery>;
+export type GetRequestsLazyQueryHookResult = ReturnType<
+  typeof useGetRequestsLazyQuery
+>;
+export type GetRequestsQueryResult = Apollo.QueryResult<
+  GetRequestsQuery,
+  GetRequestsQueryVariables
+>;
+export const AddRequestDocument = gql`
+  mutation addRequest($input: RequestInput!) {
+    addRequest(input: $input)
+  }
+`;
+export type AddRequestMutationFn = Apollo.MutationFunction<
+  AddRequestMutation,
+  AddRequestMutationVariables
+>;
 
 /**
  * __useAddRequestMutation__
@@ -228,21 +335,35 @@ export type AddRequestMutationFn = Apollo.MutationFunction<AddRequestMutation, A
  *   },
  * });
  */
-export function useAddRequestMutation(baseOptions?: Apollo.MutationHookOptions<AddRequestMutation, AddRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddRequestMutation, AddRequestMutationVariables>(AddRequestDocument, options);
-      }
-export type AddRequestMutationHookResult = ReturnType<typeof useAddRequestMutation>;
-export type AddRequestMutationResult = Apollo.MutationResult<AddRequestMutation>;
-export type AddRequestMutationOptions = Apollo.BaseMutationOptions<AddRequestMutation, AddRequestMutationVariables>;
-export const GetStatusDocument = gql`
-    query getStatus {
-  status {
-    flag
-    lights
-  }
+export function useAddRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddRequestMutation,
+    AddRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<AddRequestMutation, AddRequestMutationVariables>(
+    AddRequestDocument,
+    options,
+  );
 }
-    `;
+export type AddRequestMutationHookResult = ReturnType<
+  typeof useAddRequestMutation
+>;
+export type AddRequestMutationResult =
+  Apollo.MutationResult<AddRequestMutation>;
+export type AddRequestMutationOptions = Apollo.BaseMutationOptions<
+  AddRequestMutation,
+  AddRequestMutationVariables
+>;
+export const GetStatusDocument = gql`
+  query getStatus {
+    status {
+      flag
+      lights
+    }
+  }
+`;
 
 /**
  * __useGetStatusQuery__
@@ -259,14 +380,35 @@ export const GetStatusDocument = gql`
  *   },
  * });
  */
-export function useGetStatusQuery(baseOptions?: Apollo.QueryHookOptions<GetStatusQuery, GetStatusQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetStatusQuery, GetStatusQueryVariables>(GetStatusDocument, options);
-      }
-export function useGetStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStatusQuery, GetStatusQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetStatusQuery, GetStatusQueryVariables>(GetStatusDocument, options);
-        }
+export function useGetStatusQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetStatusQuery,
+    GetStatusQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetStatusQuery, GetStatusQueryVariables>(
+    GetStatusDocument,
+    options,
+  );
+}
+export function useGetStatusLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetStatusQuery,
+    GetStatusQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetStatusQuery, GetStatusQueryVariables>(
+    GetStatusDocument,
+    options,
+  );
+}
 export type GetStatusQueryHookResult = ReturnType<typeof useGetStatusQuery>;
-export type GetStatusLazyQueryHookResult = ReturnType<typeof useGetStatusLazyQuery>;
-export type GetStatusQueryResult = Apollo.QueryResult<GetStatusQuery, GetStatusQueryVariables>;
+export type GetStatusLazyQueryHookResult = ReturnType<
+  typeof useGetStatusLazyQuery
+>;
+export type GetStatusQueryResult = Apollo.QueryResult<
+  GetStatusQuery,
+  GetStatusQueryVariables
+>;

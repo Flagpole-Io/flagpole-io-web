@@ -3,12 +3,18 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import { useGetStatusQuery } from '../generated/graphql/graphql';
+import { FlagCircle, HelpOutline, LightbulbCircle } from '@mui/icons-material';
+
+const STATUS_ICONS: Record<string, React.ReactNode> = {
+  flag: <FlagCircle />,
+  lights: <LightbulbCircle />,
+};
 
 const Status = () => {
   const { data, startPolling, stopPolling } = useGetStatusQuery();
@@ -18,16 +24,18 @@ const Status = () => {
     return () => stopPolling();
   }, [startPolling, stopPolling]);
 
-  const tableRows = useMemo(
+  const listItems = useMemo(
     () =>
       data?.status
         ? Object.entries(data.status).map(([key, value]) => (
-            <TableRow key={key}>
-              <TableCell>
+            <ListItem key={key} secondaryAction={value || 'UNKNOWN'}>
+              <ListItemIcon>
+                {STATUS_ICONS[key] || <HelpOutline />}
+              </ListItemIcon>
+              <ListItemText>
                 {key.charAt(0).toUpperCase() + key.slice(1)}
-              </TableCell>
-              <TableCell>{value || 'UNKNOWN'}</TableCell>
-            </TableRow>
+              </ListItemText>
+            </ListItem>
           ))
         : [],
     [data],
@@ -37,9 +45,7 @@ const Status = () => {
     <Card>
       <CardHeader title="Status" />
       <CardContent>
-        <Table>
-          <TableBody>{tableRows}</TableBody>
-        </Table>
+        <List>{listItems}</List>
       </CardContent>
     </Card>
   );

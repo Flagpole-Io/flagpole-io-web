@@ -20,18 +20,26 @@ import {
 
 const Configuration = () => {
   const { data } = useGetConfigurationQuery();
-  const [updateConfiguration] = useUpdateConfigurationMutation();
+  const [updateConfiguration] = useUpdateConfigurationMutation({
+    refetchQueries: ['getConfiguration'],
+  });
 
   const { handleSubmit, handleChange, values } = useFormik({
     enableReinitialize: true,
     initialValues: data?.configuration || {
       hasWeatherProofFlag: false,
       hasLights: true,
+      hasMotor: false,
+      pushoverApiToken: '',
+      pushoverUserKey: '',
     },
-    onSubmit: (validValues) =>
+    onSubmit: (validatedValues) => {
       updateConfiguration({
-        variables: { input: { ...validValues, hasMotor: true } },
-      }),
+        variables: {
+          input: validatedValues,
+        },
+      });
+    },
   });
 
   return (
@@ -64,8 +72,36 @@ const Configuration = () => {
               />
             </FormControl>
             <FormControl>
-              <InputLabel htmlFor="pushover-code">Pushover Code</InputLabel>
-              <Input id="pushover-code" />
+              <FormControlLabel
+                name="hasMotor"
+                control={
+                  <Switch checked={values.hasMotor} onChange={handleChange} />
+                }
+                label="Has Motor"
+                labelPlacement="start"
+              />
+            </FormControl>
+            <FormControl>
+              <InputLabel htmlFor="pushover-api-token">
+                Pushover API Token
+              </InputLabel>
+              <Input
+                id="pushover-api-token"
+                name="pushoverApiToken"
+                value={values.pushoverApiToken}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl>
+              <InputLabel htmlFor="pushover-user-key">
+                Pushover User Key
+              </InputLabel>
+              <Input
+                id="pushover-user-key"
+                name="pushoverUserKey"
+                value={values.pushoverUserKey}
+                onChange={handleChange}
+              />
             </FormControl>
           </FormGroup>
         </form>

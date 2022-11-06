@@ -1,14 +1,23 @@
 import React, { useEffect, useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from '@mui/material';
+import { Card, CardContent, CardHeader } from '@mui/material';
 import { useGetRequestsQuery } from '../generated/graphql/graphql';
+import { FlagCircle, HelpOutline, LightbulbCircle } from '@mui/icons-material';
+import {
+  Timeline,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineItem,
+  TimelineOppositeContent,
+  TimelineSeparator,
+} from '@mui/lab';
+
+const TIMELINE_ICONS: Record<string, React.ReactNode> = {
+  RAISE: <FlagCircle />,
+  HALF: <FlagCircle />,
+  LOWER: <FlagCircle />,
+  LIGHTS: <LightbulbCircle />,
+};
 
 const Requests = () => {
   const { data, startPolling, stopPolling } = useGetRequestsQuery({
@@ -20,15 +29,23 @@ const Requests = () => {
     return () => stopPolling();
   }, [startPolling, stopPolling]);
 
-  const tableRows = useMemo(
+  const timelineItems = useMemo(
     () =>
       data?.requests
         ?.filter((request) => !!request)
-        .map(({ action, value }) => (
-          <TableRow>
-            <TableCell>{action}</TableCell>
-            <TableCell>{value}</TableCell>
-          </TableRow>
+        .reverse()
+        .map(({ action, value }, index) => (
+          <TimelineItem>
+            <TimelineOppositeContent mt={2}>{value}</TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineConnector />
+              <TimelineDot color={index === 0 ? 'success' : 'grey'}>
+                {TIMELINE_ICONS[action] || <HelpOutline />}
+              </TimelineDot>
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent mt={2}>{action}</TimelineContent>
+          </TimelineItem>
         )),
     [data],
   );
@@ -37,9 +54,9 @@ const Requests = () => {
     <Card>
       <CardHeader title="Requests" />
       <CardContent>
-        <Table>
-          <TableBody>{React.Children.toArray(tableRows)}</TableBody>
-        </Table>
+        <Timeline position="left">
+          {React.Children.toArray(timelineItems)}
+        </Timeline>
       </CardContent>
     </Card>
   );

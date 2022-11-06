@@ -3,6 +3,8 @@ query getConfiguration {
         hasMotor
         hasWeatherProofFlag
         hasLights
+        pushoverApiToken
+        pushoverUserKey
     }
 }
 mutation updateConfiguration($input:ConfigurationInput!) {
@@ -10,5 +12,7 @@ mutation updateConfiguration($input:ConfigurationInput!) {
         hasMotor
         hasWeatherProofFlag
         hasLights
+        pushoverApiToken
+        pushoverUserKey
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Stack } from '@mui/material';
+import { Container, Grid, Stack } from '@mui/material';
 import Controls from './components/Controls';
 import Configuration from './components/Configuration';
 import client from './lib/graphql/client';
@@ -13,12 +13,18 @@ function App() {
     <ApolloProvider client={client}>
       <Navbar />
       <Container maxWidth="md">
-        <Stack spacing={2} mt={2}>
-          <Status />
-          <Requests />
-          <Controls />
-          <Configuration />
-        </Stack>
+        <Grid container spacing={2} mt={2} pb={2}>
+          <Grid item xs={6}>
+            <Stack spacing={2}>
+              <Controls />
+              <Status />
+              <Configuration />
+            </Stack>
+          </Grid>
+          <Grid item xs={6}>
+            <Requests />
+          </Grid>
+        </Grid>
       </Container>
     </ApolloProvider>
   );
