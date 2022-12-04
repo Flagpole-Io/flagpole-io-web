@@ -15,6 +15,7 @@ import {
 import { useFormik } from 'formik';
 import {
   useGetConfigurationQuery,
+  useSendNotificationMutation,
   useUpdateConfigurationMutation,
 } from '../generated/graphql/graphql';
 
@@ -23,6 +24,7 @@ const Configuration = () => {
   const [updateConfiguration] = useUpdateConfigurationMutation({
     refetchQueries: ['getConfiguration'],
   });
+  const [sendNotification] = useSendNotificationMutation();
 
   const { handleSubmit, handleChange, values } = useFormik({
     enableReinitialize: true,
@@ -41,6 +43,12 @@ const Configuration = () => {
       });
     },
   });
+
+  const onClickTestPush = () => {
+    sendNotification({
+      variables: { input: { message: 'Test Push Notification' } },
+    });
+  };
 
   return (
     <Card>
@@ -103,6 +111,9 @@ const Configuration = () => {
                 onChange={handleChange}
               />
             </FormControl>
+            <Button color="secondary" onClick={onClickTestPush}>
+              Test Push Notification
+            </Button>
           </FormGroup>
         </form>
       </CardContent>

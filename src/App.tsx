@@ -1,12 +1,12 @@
 import React from 'react';
 import { Container, Grid, Stack } from '@mui/material';
-import Controls from './components/Controls';
 import Configuration from './components/Configuration';
 import client from './lib/graphql/client';
 import { ApolloProvider } from '@apollo/client';
 import Navbar from './components/Navbar';
-import Status from './components/Status';
-import Requests from './components/Requests';
+import RequestsContainer from './components/RequestsContainer';
+import StatusContainer from './components/StatusContainer';
+import ControlsContainer from './components/ControlsContainer';
 
 function App() {
   return (
@@ -16,13 +16,13 @@ function App() {
         <Grid container spacing={2} mt={2} pb={2}>
           <Grid item xs={6}>
             <Stack spacing={2}>
-              <Controls />
-              <Status />
+              <ControlsContainer />
+              <StatusContainer />
               <Configuration />
             </Stack>
           </Grid>
           <Grid item xs={6}>
-            <Requests />
+            <RequestsContainer />
           </Grid>
         </Grid>
       </Container>

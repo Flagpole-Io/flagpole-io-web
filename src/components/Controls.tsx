@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
+  Alert,
   Button,
   ButtonGroup,
   Card,
@@ -8,45 +9,26 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import {
-  useAddRequestMutation,
-  useGetConfigurationQuery,
-} from '../generated/graphql/graphql';
+import { GetConfigurationQuery } from '../generated/graphql/graphql';
 
-const Controls = () => {
-  const { data: configData } = useGetConfigurationQuery();
-  const [addRequest] = useAddRequestMutation({
-    refetchQueries: ['getRequests'],
-  });
-
-  const onClickLower = useCallback(
-    () => addRequest({ variables: { input: { action: 'LOWER' } } }),
-    [addRequest],
-  );
-
-  const onClickHalf = useCallback(
-    () => addRequest({ variables: { input: { action: 'HALF' } } }),
-    [addRequest],
-  );
-
-  const onClickRaise = useCallback(
-    () => addRequest({ variables: { input: { action: 'RAISE' } } }),
-    [addRequest],
-  );
-
-  const onClickLightsOn = useCallback(
-    () => addRequest({ variables: { input: { action: 'LIGHTS', value: 1 } } }),
-    [addRequest],
-  );
-
-  const onClickLightsOff = useCallback(
-    () => addRequest({ variables: { input: { action: 'LIGHTS', value: 0 } } }),
-    [addRequest],
-  );
-
+const Controls = ({
+  configuration,
+  onClickLower,
+  onClickHalf,
+  onClickRaise,
+  onClickLightsOff,
+  onClickLightsOn,
+}: {
+  onClickLower: () => void;
+  onClickHalf: () => void;
+  onClickRaise: () => void;
+  onClickLightsOn: () => void;
+  onClickLightsOff: () => void;
+  configuration?: GetConfigurationQuery['configuration'];
+}) => {
   const motorControls = useMemo(
     () =>
-      configData?.configuration?.hasMotor ? (
+      configuration?.hasMotor ? (
         <>
           <Typography>Flag</Typography>
           <ButtonGroup variant="contained" aria-label="flag controls" fullWidth>
@@ -56,17 +38,12 @@ const Controls = () => {
           </ButtonGroup>
         </>
       ) : null,
-    [
-      configData?.configuration?.hasMotor,
-      onClickHalf,
-      onClickLower,
-      onClickRaise,
-    ],
+    [configuration?.hasMotor, onClickHalf, onClickLower, onClickRaise],
   );
 
   const lightControls = useMemo(
     () =>
-      configData?.configuration?.hasLights ? (
+      configuration?.hasLights ? (
         <>
           <Typography>Lights</Typography>
           <ButtonGroup
@@ -79,18 +56,30 @@ const Controls = () => {
           </ButtonGroup>
         </>
       ) : null,
-    [configData?.configuration?.hasLights, onClickLightsOff, onClickLightsOn],
+    [configuration?.hasLights, onClickLightsOff, onClickLightsOn],
   );
+
+  const content = useMemo(() => {
+    if (!motorControls && !lightControls) {
+      return (
+        <Alert severity="info">
+          Your current configuration does not allow for any manual controls.
+        </Alert>
+      );
+    }
+
+    return (
+      <Stack spacing={2}>
+        {motorControls}
+        {lightControls}
+      </Stack>
+    );
+  }, [motorControls, lightControls]);
 
   return (
     <Card>
       <CardHeader title="Controls" />
-      <CardContent>
-        <Stack spacing={2}>
-          {motorControls}
-          {lightControls}
-        </Stack>
-      </CardContent>
+      <CardContent>{content}</CardContent>
     </Card>
   );
 };

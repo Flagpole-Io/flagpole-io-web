@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader } from '@mui/material';
-import { useGetRequestsQuery } from '../generated/graphql/graphql';
+import { GetRequestsQuery } from '../generated/graphql/graphql';
 import { FlagCircle, HelpOutline, LightbulbCircle } from '@mui/icons-material';
 import {
   Timeline,
@@ -19,19 +19,14 @@ const TIMELINE_ICONS: Record<string, React.ReactNode> = {
   LIGHTS: <LightbulbCircle />,
 };
 
-const Requests = () => {
-  const { data, startPolling, stopPolling } = useGetRequestsQuery({
-    pollInterval: 500,
-  });
-
-  useEffect(() => {
-    startPolling(1000);
-    return () => stopPolling();
-  }, [startPolling, stopPolling]);
-
+const Requests = ({
+  requests,
+}: {
+  requests?: GetRequestsQuery['requests'];
+}) => {
   const timelineItems = useMemo(
     () =>
-      data?.requests
+      requests
         ?.filter((request) => !!request)
         .reverse()
         .map(({ action, value }, index) => (
@@ -47,7 +42,7 @@ const Requests = () => {
             <TimelineContent mt={2}>{action}</TimelineContent>
           </TimelineItem>
         )),
-    [data],
+    [requests],
   );
 
   return (

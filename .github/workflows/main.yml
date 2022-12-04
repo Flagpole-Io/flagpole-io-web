@@ -1,7 +1,7 @@
+name: CI
 on:
   push:
-    branches:
-      - master
+    branches: [main]
 jobs:
   build:
     name: Build
@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 14.x
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npm run build
       - name: Archive Build

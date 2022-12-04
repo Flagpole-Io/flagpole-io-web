@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { useGetStatusQuery } from '../generated/graphql/graphql';
+import { GetStatusQuery } from '../generated/graphql/graphql';
 import { FlagCircle, HelpOutline, LightbulbCircle } from '@mui/icons-material';
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -16,18 +16,11 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   lights: <LightbulbCircle />,
 };
 
-const Status = () => {
-  const { data, startPolling, stopPolling } = useGetStatusQuery();
-
-  useEffect(() => {
-    startPolling(500);
-    return () => stopPolling();
-  }, [startPolling, stopPolling]);
-
+const Status = ({ status }: { status?: GetStatusQuery['status'] }) => {
   const listItems = useMemo(
     () =>
-      data?.status
-        ? Object.entries(data.status).map(([key, value]) => (
+      status
+        ? Object.entries(status).map(([key, value]) => (
             <ListItem key={key} secondaryAction={value || 'UNKNOWN'}>
               <ListItemIcon>
                 {STATUS_ICONS[key] || <HelpOutline />}
@@ -38,7 +31,7 @@ const Status = () => {
             </ListItem>
           ))
         : [],
-    [data],
+    [status],
   );
 
   return (
