@@ -7,6 +7,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.5.1
         with:
@@ -19,5 +20,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: dist
+          path: build
     
